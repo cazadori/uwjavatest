@@ -3,13 +3,65 @@ package com.tedneward.example;
 import java.beans.*;
 import java.util.*;
 
-public class Person {
+public class Person implements Comparable<Person>{
   private int age;
   private String name;
   private double salary;
   private String ssn;
   private boolean propertyChangeFired = false;
+  private static int numOfInstances;
   
+
+  public int getAge() {
+    return age;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public double getSalary() {
+    return salary;
+  }
+
+  public String getSSN() {
+    return ssn;
+  }
+
+  public static int count() {
+    return numOfInstances;
+  }
+
+  public void setAge(int newAge) {
+    if(newAge < 0) {
+      throw new IllegalArgumentException();
+    }
+
+    age = newAge;
+  }
+
+  public void setName(String newName) {
+    if(newName == null) {
+      throw new IllegalArgumentException();
+    }
+
+    name = newName;
+  }
+
+  public void setSalary(double newSalary) {
+    salary = newSalary;
+  }
+
+  public static ArrayList<Person> getNewardFamily() {
+    ArrayList<Person> family = new ArrayList<Person>();
+    family.add(new Person("Ted", 41, 250000));
+    family.add(new Person("Charlotte", 43, 150000));
+    family.add(new Person("Michael", 22, 10000));
+    family.add(new Person("Matthew", 15, 0));
+
+    return family;
+  }
+
   public Person() {
     this("", 0, 0.0d);
   }
@@ -18,6 +70,8 @@ public class Person {
     name = n;
     age = a;
     salary = s;
+    ssn = "";
+    numOfInstances++;
   }
 
   public void setSSN(String value) {
@@ -42,9 +96,36 @@ public class Person {
   public int timeWarp() {
     return age + 10;
   }
-  
-  public String tostring() {
-    return "{{FIXME}}";
+
+  public String toString() {
+    return "[Person name:" + name + " age:" + age + " salary:" + salary + "]";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o == null) {
+      return false;
+    }
+    if(this.getClass() != o.getClass()) {
+      return false;
+    }
+    Person p = (Person) o;
+    if((this.getAge() == p.getAge()) && (this.getName().equals(p.getName()))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  public int compareTo(Person p) {
+    return (int)p.getSalary() - (int)this.getSalary();
+  }
+
+  static class AgeComparator implements Comparator<Person> {
+    public int compare(Person p1, Person p2) {
+      return p1.getAge() - p2.getAge();
+    }
   }
 
   // PropertyChangeListener support; you shouldn't need to change any of
